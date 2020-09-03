@@ -1,3 +1,5 @@
+
+.idea/
 /framework/extensions/*
 
 !/framework/extensions/blog/
