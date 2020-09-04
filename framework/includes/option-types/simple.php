@@ -33,7 +33,11 @@ class FW_Option_Type_Hidden extends FW_Option_Type {
 	 * @internal
 	 */
 	protected function _render( $id, $option, $data ) {
-		$option['attr']['value'] = (string) $data['value'];
+    if (is_array($data['value'])) {
+      $option['attr']['value'] = $data['value']['json'];
+    } else {
+      $option['attr']['value'] = (string) $data['value'];
+    }
 
 		return '<input ' . fw_attr_to_html( $option['attr'] ) . ' type="hidden" />';
 	}
@@ -350,7 +354,11 @@ class FW_Option_Type_Html extends FW_Option_Type {
 	 * @internal
 	 */
 	protected function _render( $id, $option, $data ) {
-		$option['attr']['value'] = (string) $data['value'];
+    if (is_array($data['value'])) {
+      $option['attr']['value'] = $data['value']['json'];
+    } else {
+      $option['attr']['value'] = (string) $data['value'];
+    }
 
 		$div_attr = $option['attr'];
 		unset( $div_attr['name'] );
