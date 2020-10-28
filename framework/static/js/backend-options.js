@@ -6,10 +6,12 @@ var fwBackendOptions = {
 	/**
 	 * @deprecated Tabs are lazy loaded https://github.com/ThemeFuse/Unyson/issues/1174
 	 */
-	openTab: function(tabId) { console.warn('deprecated'); }
+	openTab: function (tabId) {
+		console.warn('deprecated');
+	}
 };
 
-jQuery(document).ready(function($){
+jQuery(document).ready(function ($) {
 	var localized = _fw_backend_options_localized;
 
 	/**
@@ -32,28 +34,29 @@ jQuery(document).ready(function($){
 			})
 
 			// make postboxes to close/open on click
-			$boxes.off('click'+ eventNamespace); // remove already attached, just to be sure, prevent multiple execution
-			$boxes.find('.postbox-header .hndle, .postbox-header .handlediv').on( 'click', function( e ) {
+			$boxes.off('click' + eventNamespace); // remove already attached, just to be sure, prevent multiple execution
+			$boxes.find('.postbox-header .hndle, .postbox-header .handlediv').off('click');
+			$boxes.find('.postbox-header .hndle, .postbox-header .handlediv').on('click', function (e) {
 
-					var $box = $(this).closest('.fw-postbox');
+				var $box = $(this).closest('.fw-postbox');
 
-					if ($box.parent().is('.fw-backend-postboxes') && !$box.siblings().length) {
-						// Do not close if only one box https://github.com/ThemeFuse/Unyson/issues/1094
-						$box.removeClass('closed');
-					} else {
-						$box.toggleClass('closed');
-					}
+				if ($box.parent().is('.fw-backend-postboxes') && !$box.siblings().length) {
+					// Do not close if only one box https://github.com/ThemeFuse/Unyson/issues/1094
+					$box.removeClass('closed');
+				} else {
+					$box.toggleClass('closed');
+				}
 
-					var isClosed = $box.hasClass('closed');
+				var isClosed = $box.hasClass('closed');
 
-					$box.trigger('fw:box:'+ (isClosed ? 'close' : 'open'));
-					$box.trigger('fw:box:toggle-closed', {isClosed: isClosed});
-				});
+				$box.trigger('fw:box:' + (isClosed ? 'close' : 'open'));
+				$box.trigger('fw:box:toggle-closed', { isClosed: isClosed });
+			});
 		}
 
 		/** Remove box header if title is empty */
 		function hideBoxEmptyTitles($boxes) {
-			$boxes.find('> .hndle > span').each(function(){
+			$boxes.find('> .hndle > span').each(function () {
 				var $this = $(this);
 
 				if (!$.trim($this.html()).length) {
@@ -64,9 +67,9 @@ jQuery(document).ready(function($){
 	}
 
 	/** Init tabs */
-	(function(){
+	(function () {
 		var htmlAttrName = 'data-fw-tab-html',
-			initTab = function($tab) {
+			initTab = function ($tab) {
 				var html;
 
 				if (html = $tab.attr(htmlAttrName)) {
@@ -100,7 +103,7 @@ jQuery(document).ready(function($){
 				var selector = '.fw-options-tab[' + htmlAttrName + ']', $tabs;
 
 				// fixes https://github.com/ThemeFuse/Unyson/issues/1634
-				$el.each(function(){
+				$el.each(function () {
 					if ($(this).is(selector)) {
 						initTab($(this));
 					}
@@ -108,7 +111,9 @@ jQuery(document).ready(function($){
 
 				// initialized tabs can contain tabs, so init recursive until nothing is found
 				while (($tabs = $el.find(selector)).length) {
-					$tabs.each(function(){ initTab($(this)); });
+					$tabs.each(function () {
+						initTab($(this));
+					});
 				}
 			};
 
@@ -207,8 +212,8 @@ jQuery(document).ready(function($){
 				 * Prevent event to be propagated to first level WordPress sortable (on edit post page)
 				 * If not prevented, boxes within options can be dragged out of parent box to first level boxes
 				 */
-				.off('mousedown'+ eventNamespace) // remove already attached (happens when this script is executed multiple times on the same elements)
-				.on('mousedown'+ eventNamespace, '.fw-postbox > .hndle, .fw-postbox > .handlediv', function(e){
+				.off('mousedown' + eventNamespace) // remove already attached (happens when this script is executed multiple times on the same elements)
+				.on('mousedown' + eventNamespace, '.fw-postbox > .hndle, .fw-postbox > .handlediv', function (e) {
 					e.stopPropagation();
 				});
 		}
@@ -223,7 +228,7 @@ jQuery(document).ready(function($){
 				.closest('.fw-backend-postboxes')
 				.not('.fw-sortable-disabled');
 
-			$sortables.each(function(){
+			$sortables.each(function () {
 				try {
 					$(this).sortable('destroy');
 				} catch (e) {
@@ -248,7 +253,7 @@ jQuery(document).ready(function($){
 	/**
 	 * Help tips (i)
 	 */
-	(function(){
+	(function () {
 		fwEvents.on('fw:options:init', function (data) {
 			var $helps = data.$elements.find('.fw-option-help:not(.initialized)');
 

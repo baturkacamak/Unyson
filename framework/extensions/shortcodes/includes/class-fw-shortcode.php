@@ -1,4 +1,4 @@
-<?php if ( ! defined('FW')) {
+<?php if (!defined('FW')) {
     die('Forbidden');
 }
 
@@ -96,7 +96,7 @@ class FW_Shortcode
 
     public function get_config($key = null)
     {
-        if ( ! $this->config) {
+        if (!$this->config) {
             $config_path = $this->locate_path('/config.php');
             if ($config_path) {
                 $vars         = fw_get_variables_from_file($config_path, ['cfg' => null]);
@@ -104,7 +104,7 @@ class FW_Shortcode
             }
         }
 
-        if ( ! is_array($this->config)) {
+        if (!is_array($this->config)) {
             return null;
         } else {
             return $key === null ? $this->config : fw_akg($key, $this->config);
@@ -133,7 +133,7 @@ class FW_Shortcode
     }
 
     /**
-     * @param string                 $key
+     * @param string $key
      * @param null|mixed|FW_Callback $default
      *
      * @return mixed|null
@@ -145,7 +145,7 @@ class FW_Shortcode
 
     public function get_options()
     {
-        if ( ! $this->options) {
+        if (!$this->options) {
             $options_path = $this->locate_path('/options.php');
             if ($options_path) {
                 $vars          = fw_get_variables_from_file($options_path, ['options' => null]);
@@ -174,7 +174,7 @@ class FW_Shortcode
 
     /**
      * @param        $atts
-     * @param null   $content
+     * @param null $content
      * @param string $tag deprecated
      *
      * @return string
@@ -199,8 +199,7 @@ class FW_Shortcode
                 );
 
                 if (is_wp_error($atts)) {
-                    return '<p>Shortcode attributes decode error: ' . $atts->get_error_message(
-                        ) . '</p>';
+                    return '<p>Shortcode attributes decode error: ' . $atts->get_error_message() . '</p>';
                 }
             } else {
                 /**
@@ -215,20 +214,20 @@ class FW_Shortcode
 
     /**
      * @param        $atts
-     * @param null   $content
+     * @param null $content
      * @param string $tag deprecated
      *
      * @return string
      */
     protected function _render($atts, $content = null, $tag = '')
     {
-        $execute_status = apply_filters('fw_shortcode_render_execute_status', $atts);
-        if (is_bool($execute_status) && ! $execute_status) {
+        $atts = apply_filters('fw_shortcode_render_execute_status', $atts);
+        if (isset($atts['render_status']) && is_bool($atts['render_status']) && !$atts['render_status']) {
             return false;
         }
 
         $view_file = $this->locate_path('/views/view.php');
-        if ( ! $view_file) {
+        if (!$view_file) {
             trigger_error(
                 sprintf(
                     __('No default view (views/view.php) found for shortcode: %s', 'fw'),
@@ -239,6 +238,7 @@ class FW_Shortcode
         }
 
         $this->enqueue_static();
+
 
         $view_extra = apply_filters(
             'fw_shortcode_render_view',

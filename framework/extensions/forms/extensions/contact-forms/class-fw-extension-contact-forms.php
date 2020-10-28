@@ -1,4 +1,4 @@
-<?php if ( ! defined('FW')) {
+<?php if (!defined('FW')) {
     die('Forbidden');
 }
 
@@ -22,41 +22,6 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form
         $form = $this->get_form_db_data($form_id);
 
         return (empty($form['form']) ? [] : $form['form']);
-    }
-
-    private function get_form_db_data($form_id)
-    {
-        if ( ! class_exists('_FW_Ext_Contact_Form_DB_Data')) {
-            require_once dirname(
-                             __FILE__
-                         ) . '/includes/helper/class--fw-ext-contact-form-db-data.php';
-        }
-
-        return _FW_Ext_Contact_Form_DB_Data::get($form_id);
-    }
-
-    /**
-     * @param $form_id
-     * @param $data
-     * * id - Form id
-     * * form - Builder value
-     * * email_to - Destination email
-     * * [subject_message]
-     * * [success_message]
-     * * [failure_message]
-     *
-     * @return bool
-     * @internal
-     */
-    public function _set_form_db_data($form_id, $data)
-    {
-        if ( ! class_exists('_FW_Ext_Contact_Form_DB_Data')) {
-            require_once dirname(
-                             __FILE__
-                         ) . '/includes/helper/class--fw-ext-contact-form-db-data.php';
-        }
-
-        return _FW_Ext_Contact_Form_DB_Data::set($form_id, $data);
     }
 
     /**
@@ -175,18 +140,23 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form
          * Use the first email filed as Reply-To header
          */
 
+        // contact form user's email
         $reply_email = false;
-        $reply_from  = false;
+        // contact form user's name
+        $reply_from = false;
         foreach ($entry_data['shortcode_to_item'] as $item) {
+            // set reply to
             if ($item['type'] === 'email' && $item['options']['required']) {
 //				$entry_data['reply_to'] = $entry_data['form_values'][ $item['shortcode'] ];
                 $reply_email = $entry_data['form_values'][$item['shortcode']];
             }
+
             if ($item['type'] === 'text' && $item['options']['required'] && $item['options']['email_from']) {
                 $reply_from = $entry_data['form_values'][$item['shortcode']];
             }
         }
 
+        // contact form user data
         if ($reply_email) {
             $entry_data['reply_to'] = $reply_email;
             if ($reply_from) {
@@ -205,14 +175,6 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form
             $this->render_view('email', $entry_data),
             $entry_data
         );
-        if ( is_user_logged_in() ) {
-            echo '<pre style="background: black; color: #fff; padding: 20px; margin: 20px">';
-            var_dump(   $to,
-                        $subject_message,
-                        $this->render_view('email', $entry_data),
-                        $entry_data );
-            echo '</pre>';
-        }
 
         if ($result['status']) {
             do_action('fw:ext:contact-forms:sent', $entry_data, $form);
@@ -234,12 +196,47 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form
         }
     }
 
+    private function get_form_db_data($form_id)
+    {
+        if (!class_exists('_FW_Ext_Contact_Form_DB_Data')) {
+            require_once dirname(
+                             __FILE__
+                         ) . '/includes/helper/class--fw-ext-contact-form-db-data.php';
+        }
+
+        return _FW_Ext_Contact_Form_DB_Data::get($form_id);
+    }
+
+    /**
+     * @param $form_id
+     * @param $data
+     * * id - Form id
+     * * form - Builder value
+     * * email_to - Destination email
+     * * [subject_message]
+     * * [success_message]
+     * * [failure_message]
+     *
+     * @return bool
+     * @internal
+     */
+    public function _set_form_db_data($form_id, $data)
+    {
+        if (!class_exists('_FW_Ext_Contact_Form_DB_Data')) {
+            require_once dirname(
+                             __FILE__
+                         ) . '/includes/helper/class--fw-ext-contact-form-db-data.php';
+        }
+
+        return _FW_Ext_Contact_Form_DB_Data::set($form_id, $data);
+    }
+
     /**
      * @internal
      */
     public function _action_post_form_type_save()
     {
-        if ( ! fw_ext_mailer_is_configured()) {
+        if (!fw_ext_mailer_is_configured()) {
             FW_Flash_Messages::add(
                 'fw-ext-forms-' . $this->get_form_type() . '-mailer',
                 str_replace(
@@ -268,7 +265,7 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form
     /**
      * Returns value of the form option
      *
-     * @param string      $id
+     * @param string $id
      * @param null|string $multikey
      *
      * @return mixed|null
