@@ -681,6 +681,8 @@ fw.getQueryString = function(name) {
 				function formSizeClass (size) { return 'fw-modal-' + size; }
 			},
 			initialize: function() {
+				this.listenTo(this.model, 'change:html', this.resizeTabsContent);
+
 				this.listenTo(this.model, 'change:html', this.render);
 				this.listenTo(this.model, 'change:size', this.renderSizeClass);
 			},
@@ -990,6 +992,12 @@ fw.getQueryString = function(name) {
 			}
 
 			$frame = $content.closest('.media-frame-content');
+
+			// if already defined
+			if ($content.height() === $content.height() - $frame.scrollTop()) {
+				return;
+			}
+
 
 			// resize icon list to fit entire window
 			$content.css('overflow-y', 'auto').height(1000000);
