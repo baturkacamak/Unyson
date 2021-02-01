@@ -23,7 +23,7 @@ fw.LOADER_URI = _fw_localized.LOADER_URI;
  * Useful images
  */
 fw.img = {
-	loadingSpinner: fw.SITE_URI +'/wp-admin/images/spinner.gif',
+	loadingSpinner: fw.SITE_URI + '/wp-admin/images/spinner.gif',
 	logoSvg: fw.LOADER_URI
 };
 
@@ -32,7 +32,7 @@ fw.img = {
  * Like intval() in php. Returns 0 on failure, not NaN
  * @param val
  */
-fw.intval = function(val) {
+fw.intval = function (val) {
 	val = parseInt(val);
 
 	return !isNaN(val) ? val : 0;
@@ -42,7 +42,7 @@ fw.intval = function(val) {
  * Calculate md5 hash of the string
  * @param {String} string
  */
-fw.md5 = (function(){
+fw.md5 = (function () {
 	"use strict";
 
 	/*
@@ -57,12 +57,12 @@ fw.md5 = (function(){
 	 * Convert a 32-bit number to a hex string with ls-byte first
 	 */
 	var hex_chr = "0123456789abcdef";
-	function rhex(num)
-	{
+
+	function rhex(num) {
 		var str = "", j;
-		for(j = 0; j <= 3; j++)
+		for (j = 0; j <= 3; j++)
 			str += hex_chr.charAt((num >> (j * 8 + 4)) & 0x0F) +
-			hex_chr.charAt((num >> (j * 8)) & 0x0F);
+				hex_chr.charAt((num >> (j * 8)) & 0x0F);
 		return str;
 	}
 
@@ -70,13 +70,12 @@ fw.md5 = (function(){
 	 * Convert a string to a sequence of 16-word blocks, stored as an array.
 	 * Append padding bits and the length, as described in the MD5 standard.
 	 */
-	function str2blks_MD5(str)
-	{
+	function str2blks_MD5(str) {
 		var nblk = ((str.length + 8) >> 6) + 1,
 			blks = new Array(nblk * 16),
 			i;
-		for(i = 0; i < nblk * 16; i++) blks[i] = 0;
-		for(i = 0; i < str.length; i++)
+		for (i = 0; i < nblk * 16; i++) blks[i] = 0;
+		for (i = 0; i < str.length; i++)
 			blks[i >> 2] |= str.charCodeAt(i) << ((i % 4) * 8);
 		blks[i >> 2] |= 0x80 << ((i % 4) * 8);
 		blks[nblk * 16 - 2] = str.length * 8;
@@ -87,8 +86,7 @@ fw.md5 = (function(){
 	 * Add integers, wrapping at 2^32. This uses 16-bit operations internally
 	 * to work around bugs in some JS interpreters.
 	 */
-	function add(x, y)
-	{
+	function add(x, y) {
 		var lsw = (x & 0xFFFF) + (y & 0xFFFF);
 		var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
 		return (msw << 16) | (lsw & 0xFFFF);
@@ -97,8 +95,7 @@ fw.md5 = (function(){
 	/*
 	 * Bitwise rotate a 32-bit number to the left
 	 */
-	function rol(num, cnt)
-	{
+	function rol(num, cnt) {
 		return (num << cnt) | (num >>> (32 - cnt));
 	}
 
@@ -106,114 +103,111 @@ fw.md5 = (function(){
 	 * These functions implement the basic operation for each round of the
 	 * algorithm.
 	 */
-	function cmn(q, a, b, x, s, t)
-	{
+	function cmn(q, a, b, x, s, t) {
 		return add(rol(add(add(a, q), add(x, t)), s), b);
 	}
-	function ff(a, b, c, d, x, s, t)
-	{
+
+	function ff(a, b, c, d, x, s, t) {
 		return cmn((b & c) | ((~b) & d), a, b, x, s, t);
 	}
-	function gg(a, b, c, d, x, s, t)
-	{
+
+	function gg(a, b, c, d, x, s, t) {
 		return cmn((b & d) | (c & (~d)), a, b, x, s, t);
 	}
-	function hh(a, b, c, d, x, s, t)
-	{
+
+	function hh(a, b, c, d, x, s, t) {
 		return cmn(b ^ c ^ d, a, b, x, s, t);
 	}
-	function ii(a, b, c, d, x, s, t)
-	{
+
+	function ii(a, b, c, d, x, s, t) {
 		return cmn(c ^ (b | (~d)), a, b, x, s, t);
 	}
 
 	/*
 	 * Take a string and return the hex representation of its MD5.
 	 */
-	function calcMD5(str)
-	{
+	function calcMD5(str) {
 		var x = str2blks_MD5(str);
-		var a =  1732584193;
+		var a = 1732584193;
 		var b = -271733879;
 		var c = -1732584194;
-		var d =  271733878;
+		var d = 271733878;
 
 		var i, olda, oldb, oldc, oldd;
 
-		for(i = 0; i < x.length; i += 16)
-		{
+		for (i = 0; i < x.length; i += 16) {
 			olda = a;
 			oldb = b;
 			oldc = c;
 			oldd = d;
 
-			a = ff(a, b, c, d, x[i+ 0], 7 , -680876936);
-			d = ff(d, a, b, c, x[i+ 1], 12, -389564586);
-			c = ff(c, d, a, b, x[i+ 2], 17,  606105819);
-			b = ff(b, c, d, a, x[i+ 3], 22, -1044525330);
-			a = ff(a, b, c, d, x[i+ 4], 7 , -176418897);
-			d = ff(d, a, b, c, x[i+ 5], 12,  1200080426);
-			c = ff(c, d, a, b, x[i+ 6], 17, -1473231341);
-			b = ff(b, c, d, a, x[i+ 7], 22, -45705983);
-			a = ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
-			d = ff(d, a, b, c, x[i+ 9], 12, -1958414417);
-			c = ff(c, d, a, b, x[i+10], 17, -42063);
-			b = ff(b, c, d, a, x[i+11], 22, -1990404162);
-			a = ff(a, b, c, d, x[i+12], 7 ,  1804603682);
-			d = ff(d, a, b, c, x[i+13], 12, -40341101);
-			c = ff(c, d, a, b, x[i+14], 17, -1502002290);
-			b = ff(b, c, d, a, x[i+15], 22,  1236535329);
+			a = ff(a, b, c, d, x[i + 0], 7, -680876936);
+			d = ff(d, a, b, c, x[i + 1], 12, -389564586);
+			c = ff(c, d, a, b, x[i + 2], 17, 606105819);
+			b = ff(b, c, d, a, x[i + 3], 22, -1044525330);
+			a = ff(a, b, c, d, x[i + 4], 7, -176418897);
+			d = ff(d, a, b, c, x[i + 5], 12, 1200080426);
+			c = ff(c, d, a, b, x[i + 6], 17, -1473231341);
+			b = ff(b, c, d, a, x[i + 7], 22, -45705983);
+			a = ff(a, b, c, d, x[i + 8], 7, 1770035416);
+			d = ff(d, a, b, c, x[i + 9], 12, -1958414417);
+			c = ff(c, d, a, b, x[i + 10], 17, -42063);
+			b = ff(b, c, d, a, x[i + 11], 22, -1990404162);
+			a = ff(a, b, c, d, x[i + 12], 7, 1804603682);
+			d = ff(d, a, b, c, x[i + 13], 12, -40341101);
+			c = ff(c, d, a, b, x[i + 14], 17, -1502002290);
+			b = ff(b, c, d, a, x[i + 15], 22, 1236535329);
 
-			a = gg(a, b, c, d, x[i+ 1], 5 , -165796510);
-			d = gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
-			c = gg(c, d, a, b, x[i+11], 14,  643717713);
-			b = gg(b, c, d, a, x[i+ 0], 20, -373897302);
-			a = gg(a, b, c, d, x[i+ 5], 5 , -701558691);
-			d = gg(d, a, b, c, x[i+10], 9 ,  38016083);
-			c = gg(c, d, a, b, x[i+15], 14, -660478335);
-			b = gg(b, c, d, a, x[i+ 4], 20, -405537848);
-			a = gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
-			d = gg(d, a, b, c, x[i+14], 9 , -1019803690);
-			c = gg(c, d, a, b, x[i+ 3], 14, -187363961);
-			b = gg(b, c, d, a, x[i+ 8], 20,  1163531501);
-			a = gg(a, b, c, d, x[i+13], 5 , -1444681467);
-			d = gg(d, a, b, c, x[i+ 2], 9 , -51403784);
-			c = gg(c, d, a, b, x[i+ 7], 14,  1735328473);
-			b = gg(b, c, d, a, x[i+12], 20, -1926607734);
+			a = gg(a, b, c, d, x[i + 1], 5, -165796510);
+			d = gg(d, a, b, c, x[i + 6], 9, -1069501632);
+			c = gg(c, d, a, b, x[i + 11], 14, 643717713);
+			b = gg(b, c, d, a, x[i + 0], 20, -373897302);
+			a = gg(a, b, c, d, x[i + 5], 5, -701558691);
+			d = gg(d, a, b, c, x[i + 10], 9, 38016083);
+			c = gg(c, d, a, b, x[i + 15], 14, -660478335);
+			b = gg(b, c, d, a, x[i + 4], 20, -405537848);
+			a = gg(a, b, c, d, x[i + 9], 5, 568446438);
+			d = gg(d, a, b, c, x[i + 14], 9, -1019803690);
+			c = gg(c, d, a, b, x[i + 3], 14, -187363961);
+			b = gg(b, c, d, a, x[i + 8], 20, 1163531501);
+			a = gg(a, b, c, d, x[i + 13], 5, -1444681467);
+			d = gg(d, a, b, c, x[i + 2], 9, -51403784);
+			c = gg(c, d, a, b, x[i + 7], 14, 1735328473);
+			b = gg(b, c, d, a, x[i + 12], 20, -1926607734);
 
-			a = hh(a, b, c, d, x[i+ 5], 4 , -378558);
-			d = hh(d, a, b, c, x[i+ 8], 11, -2022574463);
-			c = hh(c, d, a, b, x[i+11], 16,  1839030562);
-			b = hh(b, c, d, a, x[i+14], 23, -35309556);
-			a = hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
-			d = hh(d, a, b, c, x[i+ 4], 11,  1272893353);
-			c = hh(c, d, a, b, x[i+ 7], 16, -155497632);
-			b = hh(b, c, d, a, x[i+10], 23, -1094730640);
-			a = hh(a, b, c, d, x[i+13], 4 ,  681279174);
-			d = hh(d, a, b, c, x[i+ 0], 11, -358537222);
-			c = hh(c, d, a, b, x[i+ 3], 16, -722521979);
-			b = hh(b, c, d, a, x[i+ 6], 23,  76029189);
-			a = hh(a, b, c, d, x[i+ 9], 4 , -640364487);
-			d = hh(d, a, b, c, x[i+12], 11, -421815835);
-			c = hh(c, d, a, b, x[i+15], 16,  530742520);
-			b = hh(b, c, d, a, x[i+ 2], 23, -995338651);
+			a = hh(a, b, c, d, x[i + 5], 4, -378558);
+			d = hh(d, a, b, c, x[i + 8], 11, -2022574463);
+			c = hh(c, d, a, b, x[i + 11], 16, 1839030562);
+			b = hh(b, c, d, a, x[i + 14], 23, -35309556);
+			a = hh(a, b, c, d, x[i + 1], 4, -1530992060);
+			d = hh(d, a, b, c, x[i + 4], 11, 1272893353);
+			c = hh(c, d, a, b, x[i + 7], 16, -155497632);
+			b = hh(b, c, d, a, x[i + 10], 23, -1094730640);
+			a = hh(a, b, c, d, x[i + 13], 4, 681279174);
+			d = hh(d, a, b, c, x[i + 0], 11, -358537222);
+			c = hh(c, d, a, b, x[i + 3], 16, -722521979);
+			b = hh(b, c, d, a, x[i + 6], 23, 76029189);
+			a = hh(a, b, c, d, x[i + 9], 4, -640364487);
+			d = hh(d, a, b, c, x[i + 12], 11, -421815835);
+			c = hh(c, d, a, b, x[i + 15], 16, 530742520);
+			b = hh(b, c, d, a, x[i + 2], 23, -995338651);
 
-			a = ii(a, b, c, d, x[i+ 0], 6 , -198630844);
-			d = ii(d, a, b, c, x[i+ 7], 10,  1126891415);
-			c = ii(c, d, a, b, x[i+14], 15, -1416354905);
-			b = ii(b, c, d, a, x[i+ 5], 21, -57434055);
-			a = ii(a, b, c, d, x[i+12], 6 ,  1700485571);
-			d = ii(d, a, b, c, x[i+ 3], 10, -1894986606);
-			c = ii(c, d, a, b, x[i+10], 15, -1051523);
-			b = ii(b, c, d, a, x[i+ 1], 21, -2054922799);
-			a = ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
-			d = ii(d, a, b, c, x[i+15], 10, -30611744);
-			c = ii(c, d, a, b, x[i+ 6], 15, -1560198380);
-			b = ii(b, c, d, a, x[i+13], 21,  1309151649);
-			a = ii(a, b, c, d, x[i+ 4], 6 , -145523070);
-			d = ii(d, a, b, c, x[i+11], 10, -1120210379);
-			c = ii(c, d, a, b, x[i+ 2], 15,  718787259);
-			b = ii(b, c, d, a, x[i+ 9], 21, -343485551);
+			a = ii(a, b, c, d, x[i + 0], 6, -198630844);
+			d = ii(d, a, b, c, x[i + 7], 10, 1126891415);
+			c = ii(c, d, a, b, x[i + 14], 15, -1416354905);
+			b = ii(b, c, d, a, x[i + 5], 21, -57434055);
+			a = ii(a, b, c, d, x[i + 12], 6, 1700485571);
+			d = ii(d, a, b, c, x[i + 3], 10, -1894986606);
+			c = ii(c, d, a, b, x[i + 10], 15, -1051523);
+			b = ii(b, c, d, a, x[i + 1], 21, -2054922799);
+			a = ii(a, b, c, d, x[i + 8], 6, 1873313359);
+			d = ii(d, a, b, c, x[i + 15], 10, -30611744);
+			c = ii(c, d, a, b, x[i + 6], 15, -1560198380);
+			b = ii(b, c, d, a, x[i + 13], 21, 1309151649);
+			a = ii(a, b, c, d, x[i + 4], 6, -145523070);
+			d = ii(d, a, b, c, x[i + 11], 10, -1120210379);
+			c = ii(c, d, a, b, x[i + 2], 15, 718787259);
+			b = ii(b, c, d, a, x[i + 9], 21, -343485551);
 
 			a = add(a, olda);
 			b = add(b, oldb);
@@ -234,25 +228,25 @@ fw.md5 = (function(){
  * - fw.loading.show('unique-id');
  * - fw.loading.hide('unique-id');
  */
-(function($){
+(function ($) {
 	var inst = {
 		$el: null,
 		queue: [],
 		current: null,
 		timeoutId: 0,
 		pendingHide: false,
-		$getEl: function(){
+		$getEl: function () {
 			if (this.$el === null) { // lazy init
 				this.$el = $(
-					'<div id="fw-loading" style="display: none;">'+
-						'<table width="100%" height="100%"><tbody><tr><td valign="middle" align="center">'+
-							'<img src="'+ fw.img.logoSvg +'"'+
-								' width="30"'+
-								' class="fw-animation-rotate-reverse-180"'+
-								' alt="Loading"' +
-								' onerror="this.onerror=null; this.src=\''+ fw.FW_URI +'/static/img/logo-100.png\';"'+
-								' />'+
-						'</td></tr></tbody></table>'+
+					'<div id="fw-loading" style="display: none;">' +
+					'<table width="100%" height="100%"><tbody><tr><td valign="middle" align="center">' +
+					'<img src="' + fw.img.logoSvg + '"' +
+					' width="30"' +
+					' class="fw-animation-rotate-reverse-180"' +
+					' alt="Loading"' +
+					' onerror="this.onerror=null; this.src=\'' + fw.FW_URI + '/static/img/logo-100.png\';"' +
+					' />' +
+					'</td></tr></tbody></table>' +
 					'</div>'
 				);
 
@@ -261,12 +255,12 @@ fw.md5 = (function(){
 
 			return this.$el;
 		},
-		removeFromQueue: function(id) {
+		removeFromQueue: function (id) {
 			this.queue = _.filter(this.queue, function (item) {
 				return item.id != id;
 			});
 		},
-		show: function(id, opts) {
+		show: function (id, opts) {
 			if (typeof id != 'undefined') {
 				this.removeFromQueue(id);
 
@@ -296,7 +290,7 @@ fw.md5 = (function(){
 				this.$modal.removeClass(this.current.customClass);
 			}
 
-			if (this.$modal && ! this.current.wrapWithTable) {
+			if (this.$modal && !this.current.wrapWithTable) {
 				this.wrapWithTable(this.$modal);
 			}
 
@@ -311,7 +305,7 @@ fw.md5 = (function(){
 			{
 				clearTimeout(this.timeoutId);
 
-				this.timeoutId = setTimeout(_.bind(function(){
+				this.timeoutId = setTimeout(_.bind(function () {
 					if (
 						!this.current
 						||
@@ -327,7 +321,7 @@ fw.md5 = (function(){
 					if (this.current.autoClose) {
 						clearTimeout(this.timeoutId);
 
-						this.timeoutId = setTimeout(_.bind(function(){
+						this.timeoutId = setTimeout(_.bind(function () {
 							this.hide();
 						}, this), this.current.autoClose);
 					}
@@ -343,7 +337,7 @@ fw.md5 = (function(){
 
 			return true;
 		},
-		hide: function(id) {
+		hide: function (id) {
 			if (typeof id != 'undefined') {
 				if (
 					this.current
@@ -405,7 +399,7 @@ fw.md5 = (function(){
 						this.$modal.removeClass(this.current.customClass);
 					}
 
-					if (this.$modal && ! this.current.wrapWithTable) {
+					if (this.$modal && !this.current.wrapWithTable) {
 						this.wrapWithTable(this.$modal);
 					}
 
@@ -416,7 +410,7 @@ fw.md5 = (function(){
 			}
 
 			if (forceClose) {
-				this.$getEl().fadeOut('fast', _.bind(function(){
+				this.$getEl().fadeOut('fast', _.bind(function () {
 					this.$getEl().removeClass('force-closing').addClass('closed').removeAttr('style');
 				}, this));
 
@@ -428,7 +422,7 @@ fw.md5 = (function(){
 	};
 
 	fw.loading = {
-		show: function(id, opts) {
+		show: function (id, opts) {
 			/**
 			 * Compatibility with old version of fw.loading.show()
 			 * which didn't had the (id,opts) parameters
@@ -439,7 +433,7 @@ fw.md5 = (function(){
 
 			return inst.show(id, opts);
 		},
-		hide: function(id) {
+		hide: function (id) {
 			/**
 			 * Compatibility with old version of fw.loading.hide()
 			 * which didn't had the (id) parameter
@@ -456,7 +450,7 @@ fw.md5 = (function(){
 /**
  * Capitalizes the first letter of a string.
  */
-fw.capitalizeFirstLetter = function(str) {
+fw.capitalizeFirstLetter = function (str) {
 	str = str == null ? '' : String(str);
 	return str.charAt(0).toUpperCase() + str.slice(1);
 };
@@ -465,14 +459,14 @@ fw.capitalizeFirstLetter = function(str) {
  * Wait until an array of dynamically computed jQuery.Deferred() objects
  * get resolved.
  */
-fw.whenAll = function(deferreds) {
+fw.whenAll = function (deferreds) {
 	var deferred = new jQuery.Deferred();
 
 	jQuery.when.apply(jQuery, deferreds).then(
-		function() {
+		function () {
 			deferred.resolve(Array.prototype.slice.call(arguments));
 		},
-		function() {
+		function () {
 			deferred.fail(Array.prototype.slice.call(arguments));
 		}
 	);
@@ -492,7 +486,7 @@ fw.whenAll = function(deferreds) {
  * @param {Object} obj
  * @param {String} [delimiter] Default '/'
  */
-fw.ops = function(properties, value, obj, delimiter) {
+fw.ops = function (properties, value, obj, delimiter) {
 	delimiter = delimiter || '/';
 
 	if (typeof properties == 'string') {
@@ -510,7 +504,7 @@ fw.ops = function(properties, value, obj, delimiter) {
 			obj[property] = {};
 		} else if (typeof obj[property] != 'object') {
 			console.warn(
-				'[fw.ops] Object property "'+ property +'" already has non object value:', obj[property],
+				'[fw.ops] Object property "' + property + '" already has non object value:', obj[property],
 				'It will be replaced with an empty object'
 			);
 
@@ -521,7 +515,7 @@ fw.ops = function(properties, value, obj, delimiter) {
 				property = parseInt(property);
 			} else {
 				console.warn(
-					'[fw.ops] Try to set non numeric property "'+ property +'" to array:', obj[property],
+					'[fw.ops] Try to set non numeric property "' + property + '" to array:', obj[property],
 					'The array will be be replaced with an empty object'
 				);
 
@@ -549,7 +543,7 @@ fw.ops = function(properties, value, obj, delimiter) {
  * @param {*} [defaultValue] If property will not exist
  * @param {String} [delimiter] Default '/'
  */
-fw.opg = function(properties, obj, defaultValue, delimiter) {
+fw.opg = function (properties, obj, defaultValue, delimiter) {
 	delimiter = delimiter || '/';
 
 	if (typeof properties == 'string') {
@@ -577,10 +571,10 @@ fw.opg = function(properties, obj, defaultValue, delimiter) {
  * Unique random md5
  * @returns {String}
  */
-fw.randomMD5 = function() {
+fw.randomMD5 = function () {
 	return String(
 		fw.md5(
-			Math.random() +'-'+ Math.random() +'-'+ Math.random()
+			Math.random() + '-' + Math.random() + '-' + Math.random()
 		)
 	);
 };
@@ -590,30 +584,30 @@ fw.randomMD5 = function() {
  * @param name
  * @returns {string}
  */
-fw.getQueryString = function(name) {
+fw.getQueryString = function (name) {
 	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
 	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 		results = regex.exec(location.search);
 	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
-(function(){
+(function () {
 	/**
 	 * A stack-like structure to manage chains of modals
 	 * (modals that are opened one from another)
 	 */
 	var modalsStack = {
 		_stack: [],
-		push: function(modal) {
+		push: function (modal) {
 			this._stack.push(modal);
 		},
-		pop: function() {
+		pop: function () {
 			return this._stack.pop();
 		},
-		peek: function() {
+		peek: function () {
 			return this._stack[this._stack.length - 1];
 		},
-		getSize: function() {
+		getSize: function () {
 			return this._stack.length;
 		}
 	};
@@ -652,18 +646,18 @@ fw.getQueryString = function(name) {
 			attributes: {
 				'onsubmit': 'return false;'
 			},
-			onSubmit: function(e) {
+			onSubmit: function (e) {
 				e.preventDefault();
 
 				this.model.trigger('submit', {
 					$form: this.$el
 				});
 			},
-			render: function() {
+			render: function () {
 				this.$el.html(this.model.get('html'));
 
 				if (this.model.get('html').length) {
-					fwEvents.trigger('fw:options:init', {$elements: this.$el});
+					fwEvents.trigger('fw:options:init', { $elements: this.$el });
 
 					this.model.trigger('render');
 
@@ -678,9 +672,12 @@ fw.getQueryString = function(name) {
 					_.map(allSizes, formSizeClass).join(' ')
 				).addClass(formSizeClass(this.model.get('size')));
 
-				function formSizeClass (size) { return 'fw-modal-' + size; }
+				function formSizeClass(size) {
+					return 'fw-modal-' + size;
+				}
 			},
-			initialize: function() {
+			initialize: function () {
+				// resize tab content
 				this.listenTo(this.model, 'change:html', this.resizeTabsContent);
 
 				this.listenTo(this.model, 'change:html', this.render);
@@ -691,7 +688,7 @@ fw.getQueryString = function(name) {
 			 * this.$el.html('...');
 			 * this.afterHtmlReplaceFixes();
 			 */
-			afterHtmlReplaceFixes: function() {
+			afterHtmlReplaceFixes: function () {
 				/* options fixes */
 				{
 					// hide last border
@@ -718,7 +715,7 @@ fw.getQueryString = function(name) {
 		/**
 		 * Create and init this.frame
 		 */
-		initializeFrame: function(settings) {
+		initializeFrame: function (settings) {
 			settings = settings || {};
 
 			var modal = this;
@@ -731,13 +728,13 @@ fw.getQueryString = function(name) {
 					title: this.get('title'),
 					headerElements: this.get('headerElements')
 				},
-				initialize: function() {
-					this.listenTo(modal, 'change:title', function(){
+				initialize: function () {
+					this.listenTo(modal, 'change:title', function () {
 						this.set('title', modal.get('title'));
 					});
 				},
 				activate: function () {
-					this.frame.once('ready', _.bind(function(){
+					this.frame.once('ready', _.bind(function () {
 						this.frame.views.get('.media-frame-title')[0].$el
 							.text(this.get('title'))
 							.append(this.get('headerElements') || '');
@@ -747,18 +744,18 @@ fw.getQueryString = function(name) {
 
 			this.frame = new wp.media.view.MediaFrame({
 				state: 'main',
-				states: [ new ControllerMainState ],
+				states: [new ControllerMainState],
 				uploader: false
 			});
 
 			var modal = this;
 
-			this.frame.once('ready', function(){
-				var $modalWrapper    = modal.frame.modal.$el,
-					$backdrop        = $modalWrapper.find('.media-modal-backdrop'),
-					size             = modal.get('size'),
+			this.frame.once('ready', function () {
+				var $modalWrapper = modal.frame.modal.$el,
+					$backdrop = $modalWrapper.find('.media-modal-backdrop'),
+					size = modal.get('size'),
 					modalCustomClass = modal.get('modalCustomClass'),
-					$close           = $modalWrapper.find('.media-modal-close');
+					$close = $modalWrapper.find('.media-modal-close');
 
 				modal.frame.$el.addClass('hide-toolbar');
 
@@ -777,18 +774,18 @@ fw.getQueryString = function(name) {
 				/**
 				 * Show effect on close
 				 */
-				(function(){
+				(function () {
 					var eventsNamespace = '.fwModalCloseEffect';
-					var closingTimeout  = 0;
+					var closingTimeout = 0;
 
-					var closeEffect = function(){
+					var closeEffect = function () {
 						clearTimeout(closingTimeout);
 
 						// begin css animation
 						$modalWrapper.addClass('fw-modal-closing');
 
 						closingTimeout = setTimeout(
-							function(){
+							function () {
 								closingTimeout = 0;
 
 								// remove events that prevent original close
@@ -824,15 +821,15 @@ fw.getQueryString = function(name) {
 
 					// add events that prevent original close
 					function preventOriginalClose() {
-						$close.on('click'+ eventsNamespace, handleCloseClick);
-						$backdrop.on('click'+ eventsNamespace, handleCloseClick);
+						$close.on('click' + eventsNamespace, handleCloseClick);
+						$backdrop.on('click' + eventsNamespace, handleCloseClick);
 					}
 
 					preventOriginalClose();
 				})();
 			});
 
-			this.frame.on('open', function() {
+			this.frame.on('open', function () {
 				var $modalWrapper = modal.frame.modal.$el,
 					$modal = $modalWrapper.find('.media-modal'),
 					$backdrop = $modalWrapper.find('.media-modal-backdrop');
@@ -843,16 +840,18 @@ fw.getQueryString = function(name) {
 
 					$modalWrapper
 						.removeClass( // 'fw-modal-level-0 fw-modal-level-1 ...'
-							Array.apply(null, {length: 10})
+							Array.apply(null, { length: 10 })
 								.map(Number.call, Number)
-								.map(function(i){ return 'fw-modal-level-'+ i; })
+								.map(function (i) {
+									return 'fw-modal-level-' + i;
+								})
 								.join(' ')
 						)
-						.addClass('fw-modal-level-'+ stackSize);
+						.addClass('fw-modal-level-' + stackSize);
 
 					if (stackSize) {
 						$modal.css({
-							border: (stackSize * 30) +'px solid transparent'
+							border: (stackSize * 30) + 'px solid transparent'
 						});
 					}
 
@@ -914,7 +913,7 @@ fw.getQueryString = function(name) {
 				modal.trigger('open');
 			});
 
-			this.frame.on('close', function(){
+			this.frame.on('close', function () {
 				// Stop tracking modal HTML and window size
 				{
 					modal.off('change:html', modal.resizeTabsContent);
@@ -946,7 +945,7 @@ fw.getQueryString = function(name) {
 		/**
 		 * Create and init this.content
 		 */
-		initializeContent: function() {
+		initializeContent: function () {
 			this.content = new this.ContentView({
 				controller: this.frame,
 				model: this
@@ -957,11 +956,11 @@ fw.getQueryString = function(name) {
 			 */
 			jQuery.data(this.content.el, 'modal', this);
 		},
-		initialize: function(attributes, settings) {
+		initialize: function (attributes, settings) {
 			this.initializeFrame(settings);
 			this.initializeContent();
 		},
-		open: function() {
+		open: function () {
 			this.frame.open();
 
 			var modal = this;
@@ -975,7 +974,7 @@ fw.getQueryString = function(name) {
 
 			return this;
 		},
-		close: function() {
+		close: function () {
 			this.frame.$el.closest('.media-modal').find('.media-modal-close:first').trigger('click');
 
 			return this;
@@ -1038,11 +1037,13 @@ fw.getValuesFromServer = function (data) {
 		actualValues: ""
 	}, data);
 
-	if (opts.options.length === 0) { return {}; }
+	if (opts.options.length === 0) {
+		return {};
+	}
 
 	var dataToSend = [
 		'action=fw_backend_options_get_values',
-		'options='+ encodeURIComponent(JSON.stringify(opts.options)),
+		'options=' + encodeURIComponent(JSON.stringify(opts.options)),
 		'name_prefix=fw_edit_options_modal'
 	];
 
@@ -1058,7 +1059,7 @@ fw.getValuesFromServer = function (data) {
 	});
 };
 
-(function(){
+(function () {
 	var fwLoadingId = 'fw-options-modal';
 
 	/**
@@ -1100,10 +1101,10 @@ fw.getValuesFromServer = function (data) {
 			events: {
 				'submit': 'onSubmit'
 			},
-			onSubmit: function(e) {
+			onSubmit: function (e) {
 				e.preventDefault();
 
-				var loadingId = fwLoadingId +':submit',
+				var loadingId = fwLoadingId + ':submit',
 					view = this;
 
 				fw.loading.show(loadingId);
@@ -1113,7 +1114,7 @@ fw.getValuesFromServer = function (data) {
 				 * Lazy Tabs script is listening the form 'submit' event
 				 * but it's executed after this event.
 				 */
-				fwEvents.trigger('fw:options:init:tabs', {$elements: view.$el});
+				fwEvents.trigger('fw:options:init:tabs', { $elements: view.$el });
 
 				view.model.getValuesFromServer(view.$el.serialize())
 					.done(function (response, status, xhr) {
@@ -1125,7 +1126,7 @@ fw.getValuesFromServer = function (data) {
 							 * user completed the form with data and wants to submit data
 							 * do not delete all his work
 							 */
-							alert('Error: '+ response.data.message);
+							alert('Error: ' + response.data.message);
 							return;
 						}
 
@@ -1133,10 +1134,10 @@ fw.getValuesFromServer = function (data) {
 						 * Make sure the second set() will trigger the 'change' event
 						 * Fixes https://github.com/ThemeFuse/Unyson/issues/1998#issuecomment-248671721
 						 */
-						view.model.set('values', {}, {silent: true});
+						view.model.set('values', {}, { silent: true });
 						view.model.set('values', response.data.values);
 
-						if (! view.model.frame.$el.hasClass('fw-options-modal-no-close')) {
+						if (!view.model.frame.$el.hasClass('fw-options-modal-no-close')) {
 							// simulate click on close button to fire animations
 							view.model.frame.modal.$el.find('.media-modal-close').trigger('click');
 						}
@@ -1151,11 +1152,11 @@ fw.getValuesFromServer = function (data) {
 						 * user completed the form with data and wants to submit data
 						 * do not delete all his work
 						 */
-						alert(status +': '+ error.message);
+						alert(status + ': ' + error.message);
 					});
 			},
-			resetForm: function() {
-				var loadingId = fwLoadingId +':reset';
+			resetForm: function () {
+				var loadingId = fwLoadingId + ':reset';
 
 				fw.loading.show(loadingId);
 
@@ -1164,7 +1165,7 @@ fw.getValuesFromServer = function (data) {
 					type: 'POST',
 					data: [
 						'action=fw_backend_options_get_values',
-						'options='+ encodeURIComponent(JSON.stringify(this.model.get('options'))),
+						'options=' + encodeURIComponent(JSON.stringify(this.model.get('options'))),
 						'name_prefix=fw_edit_options_modal'
 					].join('&'),
 					dataType: 'json',
@@ -1177,7 +1178,7 @@ fw.getValuesFromServer = function (data) {
 							 * user completed the form with data and wants to submit data
 							 * do not delete all his work
 							 */
-							alert('Error: '+ response.data.message);
+							alert('Error: ' + response.data.message);
 							return;
 						}
 
@@ -1196,7 +1197,7 @@ fw.getValuesFromServer = function (data) {
 						 * user completed the form with data and wants to submit data
 						 * do not delete all his work
 						 */
-						alert(status +': '+ String(error));
+						alert(status + ': ' + String(error));
 					}
 				});
 			}
@@ -1213,14 +1214,18 @@ fw.getValuesFromServer = function (data) {
 				 * and sent to fw()->backend->render_options()
 				 */
 				options: [
-					{'demo-text': {
-						'type': 'text',
-						'label': 'Demo Text'
-					}},
-					{'demo-textarea': {
-						'type': 'textarea',
-						'label': 'Demo Textarea'
-					}}
+					{
+						'demo-text': {
+							'type': 'text',
+							'label': 'Demo Text'
+						}
+					},
+					{
+						'demo-textarea': {
+							'type': 'textarea',
+							'label': 'Demo Textarea'
+						}
+					}
 				],
 				/**
 				 * Values of the options {'option-id': 'option value'}
@@ -1234,18 +1239,22 @@ fw.getValuesFromServer = function (data) {
 		initialize: function () {
 			fw.Modal.prototype.initialize.apply(this, arguments);
 
-			fwEvents.trigger('fw:options-modal:after-initialize', {modal: this});
+			fwEvents.trigger('fw:options-modal:after-initialize', { modal: this });
 
 			// Forward events to fwEvents
 			{
 				/** @since 2.6.14 */
-				this.on('open',  function () { fwEvents.trigger('fw:options-modal:open',  {modal: this}); });
+				this.on('open', function () {
+					fwEvents.trigger('fw:options-modal:open', { modal: this });
+				});
 
 				/** @since 2.6.14 */
-				this.on('close', function () { fwEvents.trigger('fw:options-modal:close', {modal: this}); });
+				this.on('close', function () {
+					fwEvents.trigger('fw:options-modal:close', { modal: this });
+				});
 			}
 		},
-		initializeFrame: function(settings) {
+		initializeFrame: function (settings) {
 			fw.Modal.prototype.initializeFrame.call(this, settings);
 
 			settings = settings || {};
@@ -1310,12 +1319,12 @@ fw.getValuesFromServer = function (data) {
 				);
 			});
 
-			this.frame.once('ready', _.bind(function() {
+			this.frame.once('ready', _.bind(function () {
 				this.frame.$el.removeClass('hide-toolbar');
 				this.frame.modal.$el.addClass('fw-options-modal');
 			}, this));
 
-			function triggerSubmit () {
+			function triggerSubmit() {
 				/**
 				 * Simulate form submit
 				 * Important: Empty input[required] must not start form submit
@@ -1327,7 +1336,7 @@ fw.getValuesFromServer = function (data) {
 		/**
 		 * @param {Object} [values] Offer custom values for display. The user can reject them by closing the modal
 		 */
-		open: function(values) {
+		open: function (values) {
 			fw.Modal.prototype.open.call(this);
 
 			this.updateHtml(values);
@@ -1367,7 +1376,7 @@ fw.getValuesFromServer = function (data) {
 			return this.getValuesFromServer(this.content.$el.serialize());
 		},
 
-		updateHtml: function(values) {
+		updateHtml: function (values) {
 			fw.loading.show(fwLoadingId);
 
 			this.set('html', '');
@@ -1385,7 +1394,7 @@ fw.getValuesFromServer = function (data) {
 					modal.set(
 						'values',
 						response.data.default_values,
-						{silent: modal.get('silentReceiveOfDefaultValues')}
+						{ silent: modal.get('silentReceiveOfDefaultValues') }
 					);
 				}
 			});
@@ -1410,7 +1419,7 @@ fw.getValuesFromServer = function (data) {
  *
  * Modified
  **/
-;(function($) {
+;(function ($) {
 
 	var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
 		a256 = '',
@@ -1429,19 +1438,19 @@ fw.getValuesFromServer = function (data) {
 		 * @param {String} strUni Unicode string to be encoded as UTF-8
 		 * @returns {String} encoded string
 		 */
-		encode: function(strUni) {
+		encode: function (strUni) {
 			// use regular expressions & String.replace callback function for better efficiency
 			// than procedural approaches
 			var strUtf = strUni.replace(/[\u0080-\u07ff]/g, // U+0080 - U+07FF => 2 bytes 110yyyyy, 10zzzzzz
-				function(c) {
+				function (c) {
 					var cc = c.charCodeAt(0);
 					return String.fromCharCode(0xc0 | cc >> 6, 0x80 | cc & 0x3f);
 				})
 				.replace(/[\u0800-\uffff]/g, // U+0800 - U+FFFF => 3 bytes 1110xxxx, 10yyyyyy, 10zzzzzz
-				function(c) {
-					var cc = c.charCodeAt(0);
-					return String.fromCharCode(0xe0 | cc >> 12, 0x80 | cc >> 6 & 0x3F, 0x80 | cc & 0x3f);
-				});
+					function (c) {
+						var cc = c.charCodeAt(0);
+						return String.fromCharCode(0xe0 | cc >> 12, 0x80 | cc >> 6 & 0x3F, 0x80 | cc & 0x3f);
+					});
 			return strUtf;
 		},
 
@@ -1451,23 +1460,23 @@ fw.getValuesFromServer = function (data) {
 		 * @param {String} strUtf UTF-8 string to be decoded back to Unicode
 		 * @returns {String} decoded string
 		 */
-		decode: function(strUtf) {
+		decode: function (strUtf) {
 			// note: decode 3-byte chars first as decoded 2-byte strings could appear to be 3-byte char!
 			var strUni = strUtf.replace(/[\u00e0-\u00ef][\u0080-\u00bf][\u0080-\u00bf]/g, // 3-byte chars
-				function(c) { // (note parentheses for precence)
+				function (c) { // (note parentheses for precence)
 					var cc = ((c.charCodeAt(0) & 0x0f) << 12) | ((c.charCodeAt(1) & 0x3f) << 6) | (c.charCodeAt(2) & 0x3f);
 					return String.fromCharCode(cc);
 				})
 				.replace(/[\u00c0-\u00df][\u0080-\u00bf]/g, // 2-byte chars
-				function(c) { // (note parentheses for precence)
-					var cc = (c.charCodeAt(0) & 0x1f) << 6 | c.charCodeAt(1) & 0x3f;
-					return String.fromCharCode(cc);
-				});
+					function (c) { // (note parentheses for precence)
+						var cc = (c.charCodeAt(0) & 0x1f) << 6 | c.charCodeAt(1) & 0x3f;
+						return String.fromCharCode(cc);
+					});
 			return strUni;
 		}
 	};
 
-	while(i < 256) {
+	while (i < 256) {
 		var c = String.fromCharCode(i);
 		a256 += c;
 		r256[i] = i;
@@ -1483,14 +1492,14 @@ fw.getValuesFromServer = function (data) {
 			result = '',
 			bitsInBuffer = 0;
 
-		while(i < length) {
+		while (i < length) {
 			var c = s.charCodeAt(i);
 			c = c < 256 ? alpha[c] : -1;
 
 			buffer = (buffer << w1) + c;
 			bitsInBuffer += w1;
 
-			while(bitsInBuffer >= w2) {
+			while (bitsInBuffer >= w2) {
 				bitsInBuffer -= w2;
 				var tmp = buffer >> bitsInBuffer;
 				result += beta.charAt(tmp);
@@ -1498,25 +1507,26 @@ fw.getValuesFromServer = function (data) {
 			}
 			++i;
 		}
-		if(!discard && bitsInBuffer > 0) result += beta.charAt(buffer << (w2 - bitsInBuffer));
+		if (!discard && bitsInBuffer > 0) result += beta.charAt(buffer << (w2 - bitsInBuffer));
 		return result;
 	}
 
-	var Plugin = function(dir, input, encode) {
+	var Plugin = function (dir, input, encode) {
 		return input ? Plugin[dir](input, encode) : dir ? null : this;
 	};
 
-	Plugin.btoa = Plugin.encode = function(plain, utf8encode) {
+	Plugin.btoa = Plugin.encode = function (plain, utf8encode) {
 		plain = Plugin.raw === false || Plugin.utf8encode || utf8encode ? UTF8.encode(plain) : plain;
 		plain = code(plain, false, r256, b64, 8, 6);
 		return plain + '===='.slice((plain.length % 4) || 4);
 	};
 
-	Plugin.atob = Plugin.decode = function(coded, utf8decode) {
+	Plugin.atob = Plugin.decode = function (coded, utf8decode) {
 		coded = coded.replace(/[^A-Za-z0-9\+\/\=]/g, "");
 		coded = String(coded).split('=');
 		var i = coded.length;
-		do {--i;
+		do {
+			--i;
 			coded[i] = code(coded[i], true, r64, a256, 6, 8);
 		} while (i > 0);
 		coded = coded.join('');
@@ -1530,7 +1540,7 @@ fw.getValuesFromServer = function (data) {
 /**
  * fw.qtip($elements)
  */
-(function($){
+(function ($) {
 	/**
 	 * Trigger custom event with delay when mouse left (i) and popup
 	 * @param $i
@@ -1541,28 +1551,28 @@ fw.getValuesFromServer = function (data) {
 		var hideTimeout = 0;
 		var hideDelay = 200;
 
-		var hide = function(){
+		var hide = function () {
 			clearTimeout(hideTimeout);
 
-			hideTimeout = setTimeout(function(){
+			hideTimeout = setTimeout(function () {
 				$i.trigger('fw-qtip:hide');
 			}, hideDelay);
 		};
 
 		{
 			api.elements.tooltip
-				.on('mouseenter', function(){
+				.on('mouseenter', function () {
 					clearTimeout(hideTimeout);
 				})
-				.on('mouseleave', function(){
+				.on('mouseleave', function () {
 					hide();
 				});
 
 			$i
-				.on('mouseenter', function(){
+				.on('mouseenter', function () {
 					clearTimeout(hideTimeout);
 				})
-				.on('mouseleave', function(){
+				.on('mouseleave', function () {
 					hide();
 				});
 		}
@@ -1571,10 +1581,10 @@ fw.getValuesFromServer = function (data) {
 	var idIncrement = 1;
 
 	function initHelps($helps) {
-		$helps.each(function(){
+		$helps.each(function () {
 			var $i = $(this);
 
-			var id = 'fw-qtip-'+ idIncrement++;
+			var id = 'fw-qtip-' + idIncrement++;
 
 			var hideInitialized = false;
 
@@ -1582,10 +1592,10 @@ fw.getValuesFromServer = function (data) {
 				id: id,
 				position: {
 					viewport: $(document.body),
-					at: $i.attr('data-custom-at') ? ( $i.attr('data-custom-at')) : 'top center',
-					my: $i.attr('data-custom-my') ? ( $i.attr('data-custom-my')) : 'bottom center',
+					at: $i.attr('data-custom-at') ? ($i.attr('data-custom-at')) : 'top center',
+					my: $i.attr('data-custom-my') ? ($i.attr('data-custom-my')) : 'bottom center',
 					adjust: {
-						y: $i.attr('data-adjust') ? ( + $i.attr('data-adjust')) : 2
+						y: $i.attr('data-adjust') ? (+$i.attr('data-adjust')) : 2
 					}
 				},
 				style: {
@@ -1600,9 +1610,9 @@ fw.getValuesFromServer = function (data) {
 				show: {
 					solo: true,
 					event: 'mouseover',
-					effect: function(offset) {
+					effect: function (offset) {
 						// fix tip position
-						setTimeout(function(){
+						setTimeout(function () {
 							offset.elements.tooltip.css('top',
 								(parseInt(offset.elements.tooltip.css('top')) + 5) + 'px'
 							);
@@ -1619,8 +1629,8 @@ fw.getValuesFromServer = function (data) {
 				},
 				hide: {
 					event: 'fw-qtip:hide',
-					effect: function(offset) {
-						$(this).fadeOut(300, function(){
+					effect: function (offset) {
+						$(this).fadeOut(300, function () {
 							/**
 							 * Reset tip content html.
 							 * Needed for video tips, after hide the video should stop.
@@ -1631,7 +1641,7 @@ fw.getValuesFromServer = function (data) {
 				}
 			});
 
-			$i.on('remove', function(){
+			$i.on('remove', function () {
 				api.hide();
 			});
 
@@ -1646,7 +1656,7 @@ fw.getValuesFromServer = function (data) {
  * Allow to select external links
  * jQuery('a:fw-external')
  */
-jQuery.expr[':']['fw-external'] = function(obj){
+jQuery.expr[':']['fw-external'] = function (obj) {
 	return !obj.href.match(/^mailto\:/)
 		&& (obj.hostname != location.hostname)
 		&& !obj.href.match(/^javascript\:/)
@@ -1676,7 +1686,7 @@ fw.elementEventHasListenerInContainer = function ($element, event, $container) {
 			&&
 			events[event]
 		) {
-			jQuery.each(events[event], function(i, eventData){
+			jQuery.each(events[event], function (i, eventData) {
 				if ($element.is(eventData.selector)) {
 					foundListener = true;
 					return false;
@@ -1704,7 +1714,7 @@ fw.elementEventHasListenerInContainer = function ($element, event, $container) {
 				return true;
 			}
 
-			if ($currentParent.attr('on'+ event)) {
+			if ($currentParent.attr('on' + event)) {
 				return true;
 			}
 
@@ -1738,27 +1748,27 @@ fw.elementEventHasListenerInContainer = function ($element, event, $container) {
  *
  * fw.soleModal.hide('unique-id');
  */
-fw.soleModal = (function(){
+fw.soleModal = (function () {
 	var inst = {
 		queue: [
 			/*
-			{
-				id: 'hello'
-				html: 'Hello <b>World</b>!'
-				autoHide: 0000 // auto hide timeout in ms
-				allowClose: true // useful when you make an ajax and must force the user to wait until it will finish
-				showCloseButton: true // false will hide the button, but the user will still be able to click on backdrop to close it
-				width: 350
-				height: 200
-				hidePrevious: false // just replace the modal content or hide the previous modal and open it again with new content
-				updateIfCurrent: false // if current open modal has the same id as modal requested to show, update it without reopening
-				backdrop: null // true - light, false - dark
-				afterOpenStart: function(){} // before open animation starts
-				afterOpen: function(){}
-				afterCloseStart: function(){} // before close animation starts
-				afterClose: function(){}
-			}
-			*/
+			 {
+			 id: 'hello'
+			 html: 'Hello <b>World</b>!'
+			 autoHide: 0000 // auto hide timeout in ms
+			 allowClose: true // useful when you make an ajax and must force the user to wait until it will finish
+			 showCloseButton: true // false will hide the button, but the user will still be able to click on backdrop to close it
+			 width: 350
+			 height: 200
+			 hidePrevious: false // just replace the modal content or hide the previous modal and open it again with new content
+			 updateIfCurrent: false // if current open modal has the same id as modal requested to show, update it without reopening
+			 backdrop: null // true - light, false - dark
+			 afterOpenStart: function(){} // before open animation starts
+			 afterOpen: function(){}
+			 afterCloseStart: function(){} // before close animation starts
+			 afterClose: function(){}
+			 }
+			 */
 		],
 		/** @type {Object|null} */
 		current: null,
@@ -1768,26 +1778,26 @@ fw.soleModal = (function(){
 		currentMethod: '',
 		currentMethodTimeoutId: 0,
 		pendingMethod: '',
-		lazyInit: function(){
+		lazyInit: function () {
 			if (this.$modal) {
 				return false;
 			}
 
 			this.$modal = jQuery(
-				'<div class="fw-modal fw-sole-modal" style="display:none;">'+
-				'    <div class="media-modal wp-core-ui" style="width: 350px; height: 200px;">'+
+				'<div class="fw-modal fw-sole-modal" style="display:none;">' +
+				'    <div class="media-modal wp-core-ui" style="width: 350px; height: 200px;">' +
 				'        <div class="media-modal-content" style="min-height: 200px;">' +
-				'            <button type="button" class="button-link media-modal-close"><span class="media-modal-icon"></span></button>'+
-				'            <table width="100%" height="100%"><tbody><tr>'+
-				'                <td valign="middle" class="fw-sole-modal-content fw-text-center"><!-- modal content --></td>'+
-				'            </tr><tbody></table>'+
-				'        </div>'+
-				'    </div>'+
-				'    <div class="media-modal-backdrop"></div>'+
+				'            <button type="button" class="button-link media-modal-close"><span class="media-modal-icon"></span></button>' +
+				'            <table width="100%" height="100%"><tbody><tr>' +
+				'                <td valign="middle" class="fw-sole-modal-content fw-text-center"><!-- modal content --></td>' +
+				'            </tr><tbody></table>' +
+				'        </div>' +
+				'    </div>' +
+				'    <div class="media-modal-backdrop"></div>' +
 				'</div>'
 			);
 
-			( this.$getCloseButton().add(this.$getBackdrop()) ).on('click', _.bind(function(){
+			(this.$getCloseButton().add(this.$getBackdrop())).on('click', _.bind(function () {
 				if (this.current && !this.current.allowClose) {
 					// manual close not is allowed
 					return;
@@ -1800,17 +1810,17 @@ fw.soleModal = (function(){
 
 			return true;
 		},
-		$getBackdrop: function() {
+		$getBackdrop: function () {
 			this.lazyInit();
 
 			return this.$modal.find('.media-modal-backdrop:first');
 		},
-		$getCloseButton: function() {
+		$getCloseButton: function () {
 			this.lazyInit();
 
 			return this.$modal.find('.media-modal-close:first');
 		},
-		$getContent: function() {
+		$getContent: function () {
 			return this.$modal.find('.fw-sole-modal-content:first');
 		},
 		wrapWithTable: function ($modal) {
@@ -1820,16 +1830,16 @@ fw.soleModal = (function(){
 
 			var htmlTemplate =
 				'<tbody>' +
-					'<tr>' +
-						'<td valign="middle" class="fw-sole-modal-content fw-text-center">' +
-							temporaryContent +
-						'</td>' +
-					'</tr>' +
+				'<tr>' +
+				'<td valign="middle" class="fw-sole-modal-content fw-text-center">' +
+				temporaryContent +
+				'</td>' +
+				'</tr>' +
 				'</tbody>';
 
 			var $table = jQuery('<table>', {
 				html: htmlTemplate
-			}).attr({width: '100%', height: '100%'});
+			}).attr({ width: '100%', height: '100%' });
 
 			$modal.find('.media-modal-content').append($table);
 		},
@@ -1846,12 +1856,12 @@ fw.soleModal = (function(){
 					html: temporaryContent
 				}));
 		},
-		setContent: function(html) {
+		setContent: function (html) {
 			this.lazyInit();
 
 			this.$getContent().html(html || '&nbsp;');
 		},
-		runPendingMethod: function() {
+		runPendingMethod: function () {
 			if (this.currentMethod) {
 				return false;
 			}
@@ -1881,7 +1891,7 @@ fw.soleModal = (function(){
 				return false;
 			}
 		},
-		setSize: function(width, height) {
+		setSize: function (width, height) {
 			var $size = this.$modal.find('> .media-modal');
 			var $modal = this.$modal;
 			$modal.addClass('fw-modal-opening');
@@ -1892,8 +1902,8 @@ fw.soleModal = (function(){
 				$size.width() != width
 			) {
 				$size.animate({
-					'height': height +'px',
-					'width': width +'px'
+					'height': height + 'px',
+					'width': width + 'px'
 				}, this.animationTime);
 			}
 
@@ -1914,7 +1924,9 @@ fw.soleModal = (function(){
 		show: function (id, html, opts) {
 			if (typeof id != 'undefined') {
 				// make sure to remove this id from queue (if was added previously)
-				this.queue = _.filter(this.queue, function (item) { return item.id != id; });
+				this.queue = _.filter(this.queue, function (item) {
+					return item.id != id;
+				});
 
 				{
 					opts = jQuery.extend({
@@ -1928,10 +1940,14 @@ fw.soleModal = (function(){
 						wrapWithTable: true,
 						backdrop: null,
 						customClass: null,
-						afterOpen: function(){},
-						afterOpenStart: function(){},
-						afterClose: function(){},
-						afterCloseStart: function(){}
+						afterOpen: function () {
+						},
+						afterOpenStart: function () {
+						},
+						afterClose: function () {
+						},
+						afterCloseStart: function () {
+						}
 					}, opts || {});
 
 					// hide close button if close is not allowed
@@ -1962,7 +1978,7 @@ fw.soleModal = (function(){
 						this.$modal.removeClass(this.current.customClass);
 					}
 
-					if (this.$modal && ! this.current.wrapWithTable) {
+					if (this.$modal && !this.current.wrapWithTable) {
 						this.wrapWithTable(this.$modal);
 					}
 
@@ -1974,7 +1990,7 @@ fw.soleModal = (function(){
 
 					this.setContent(this.current.html);
 
-					if (this.$modal && ! this.current.wrapWithTable) {
+					if (this.$modal && !this.current.wrapWithTable) {
 						this.unwrapWithTable(this.$modal);
 					}
 
@@ -1988,7 +2004,7 @@ fw.soleModal = (function(){
 				this.$modal.removeClass(this.current.customClass);
 			}
 
-			if (this.current && this.$modal && ! this.current.wrapWithTable) {
+			if (this.current && this.$modal && !this.current.wrapWithTable) {
 				this.unwrapWithTable(this.$modal);
 			}
 
@@ -2010,7 +2026,7 @@ fw.soleModal = (function(){
 				this.$modal.removeClass('fw-modal-backdrop-light fw-modal-backdrop-dark');
 
 				if (this.current.backdrop !== null) {
-					this.$modal.addClass('fw-modal-backdrop-'+ (this.current.backdrop ? 'light' : 'dark'));
+					this.$modal.addClass('fw-modal-backdrop-' + (this.current.backdrop ? 'light' : 'dark'));
 				}
 			}
 
@@ -2021,7 +2037,7 @@ fw.soleModal = (function(){
 				this.$modal.addClass(this.current.customClass);
 			}
 
-			if (this.$modal && ! this.current.wrapWithTable) {
+			if (this.$modal && !this.current.wrapWithTable) {
 				this.unwrapWithTable(this.$modal);
 			}
 
@@ -2030,7 +2046,7 @@ fw.soleModal = (function(){
 			this.setSize(this.current.width, this.current.height);
 
 			this.current.afterOpenStart(this.$modal);
-			this.currentMethodTimeoutId = setTimeout(_.bind(function() {
+			this.currentMethodTimeoutId = setTimeout(_.bind(function () {
 				this.current.afterOpen();
 
 				this.currentMethod = '';
@@ -2054,7 +2070,7 @@ fw.soleModal = (function(){
 		 * @param {String} [id]
 		 * @returns {boolean}
 		 */
-		hide: function(id) {
+		hide: function (id) {
 			if (typeof id != 'undefined') {
 				if (this.current && this.current.id == id) {
 					// this id is currently displayed, hide it
@@ -2090,14 +2106,14 @@ fw.soleModal = (function(){
 			if (this.queue.length && !this.queue[0].hidePrevious) {
 				// replace content
 				this.current.afterCloseStart(this.$modal);
-				this.$getContent().fadeOut('fast', _.bind(function(){
+				this.$getContent().fadeOut('fast', _.bind(function () {
 					this.current.afterClose();
 
 					if (this.$modal && this.current.customClass !== null) {
 						this.$modal.removeClass(this.current.customClass);
 					}
 
-					if (this.$modal && ! this.current.wrapWithTable) {
+					if (this.$modal && !this.current.wrapWithTable) {
 						this.wrapWithTable(this.$modal);
 					}
 
@@ -2113,7 +2129,7 @@ fw.soleModal = (function(){
 			this.$modal.addClass('fw-modal-closing');
 
 			this.current.afterCloseStart(this.$modal);
-			this.currentMethodTimeoutId = setTimeout(_.bind(function(){
+			this.currentMethodTimeoutId = setTimeout(_.bind(function () {
 				this.current.afterClose();
 
 				this.currentMethod = '';
@@ -2127,7 +2143,7 @@ fw.soleModal = (function(){
 					this.$modal.removeClass(this.current.customClass);
 				}
 
-				if (this.$modal && ! this.current.wrapWithTable) {
+				if (this.$modal && !this.current.wrapWithTable) {
 					this.wrapWithTable(this.$modal);
 				}
 
@@ -2141,10 +2157,10 @@ fw.soleModal = (function(){
 	};
 
 	return {
-		show: function(id, html, opts) {
+		show: function (id, html, opts) {
 			inst.show(id, html, opts);
 		},
-		hide: function(id){
+		hide: function (id) {
 			inst.hide(id);
 		},
 		/**
@@ -2157,7 +2173,7 @@ fw.soleModal = (function(){
 				typeIconClass = '',
 				typeTitle = '';
 
-			jQuery.each(flashMessages, function(type, messages){
+			jQuery.each(flashMessages, function (type, messages) {
 				typeHtml = [];
 
 				switch (type) {
@@ -2185,22 +2201,22 @@ fw.soleModal = (function(){
 						typeMessageClass = typeIconClass = typeTitle = '';
 				}
 
-				jQuery.each(messages, function(messageId, message){
+				jQuery.each(messages, function (messageId, message) {
 					if (!typeTitle.length) {
 						return;
 					}
 
 					typeHtml.push(
-						'<li>'+
-							'<h2 class="'+ typeMessageClass +'"><span class="'+ typeIconClass +'"></span> '+ typeTitle +'</h2>'+
-							'<p class="fw-text-muted"><em>'+ message +'</em></p>'+
+						'<li>' +
+						'<h2 class="' + typeMessageClass + '"><span class="' + typeIconClass + '"></span> ' + typeTitle + '</h2>' +
+						'<p class="fw-text-muted"><em>' + message + '</em></p>' +
 						'</li>'
 					);
 				});
 
 				if (typeHtml.length) {
 					html.push(
-						'<ul>'+ typeHtml.join('</ul><ul>') +'</ul>'
+						'<ul>' + typeHtml.join('</ul><ul>') + '</ul>'
 					);
 				}
 			});
@@ -2240,13 +2256,13 @@ fw.soleModal = (function(){
 fw.soleConfirm = (function ($) {
 	var hashMap = {};
 
-	function create (opts) {
+	function create(opts) {
 		var confirm = new Confirm(opts);
 		hashMap[confirm.id] = confirm;
 		return hashMap[confirm.id];
 	}
 
-	function Confirm (opts) {
+	function Confirm(opts) {
 		this.result = jQuery.Deferred();
 		this.id = fw.randomMD5();
 
@@ -2255,7 +2271,9 @@ fw.soleConfirm = (function ($) {
 			message: null,
 			backdrop: null,
 			renderFunction: null,
-			shouldResolvePromise: function (confirm, el, action) { return true; },
+			shouldResolvePromise: function (confirm, el, action) {
+				return true;
+			},
 			okHTML: _fw_localized.l10n.ok,
 			cancelHTML: _fw_localized.l10n.cancel,
 			customClass: ''
@@ -2337,13 +2355,13 @@ fw.soleConfirm = (function ($) {
 	};
 
 	Confirm.prototype._checkIsSet = function () {
-		if (! hashMap[this.id]) {
+		if (!hashMap[this.id]) {
 			throw "You can't do operations on fullfilled Confirm! Do a .reset() first.";
 		}
 	};
 
 	Confirm.prototype._handleClose = function (event) {
-        event.preventDefault();
+		event.preventDefault();
 
 		var $el = $(event.target);
 
@@ -2351,7 +2369,7 @@ fw.soleConfirm = (function ($) {
 
 			// do not do any transformation on $el here by intent
 
-		} else if (! $el.hasClass('fw-sole-confirm-button')) {
+		} else if (!$el.hasClass('fw-sole-confirm-button')) {
 			$el = $el.closest('.fw-sole-confirm-button');
 		}
 
@@ -2372,16 +2390,16 @@ fw.soleConfirm = (function ($) {
 					confirm, modal_container
 				);
 
-				if (! shouldHideAfterResolve) {
+				if (!shouldHideAfterResolve) {
 					return;
 				}
 
 				// probably keep this syntax for another actions in future
 				_.contains(['resolve'], action) &&
-					confirm.result[action]({
-						confirm: confirm,
-						modal_container: $el.closest('.fw-sole-modal')[0]
-					});
+				confirm.result[action]({
+					confirm: confirm,
+					modal_container: $el.closest('.fw-sole-modal')[0]
+				});
 
 			}
 
@@ -2422,7 +2440,9 @@ fw.soleConfirm = (function ($) {
 
 		return topHtml + selfHtml(cancelButton) + selfHtml(okButton);
 
-		function selfHtml (el) { return $('<div>').append(el).html(); }
+		function selfHtml(el) {
+			return $('<div>').append(el).html();
+		}
 	};
 
 	return {

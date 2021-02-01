@@ -16,7 +16,7 @@
 			.find('> .history-container')
 			.append(elements.$undo)
 			.append(elements.$redo);
-
+console.log( 'later' );
 		var utils = {
 			disableUndo: function () {
 				elements.$undo.addClass('disabled');

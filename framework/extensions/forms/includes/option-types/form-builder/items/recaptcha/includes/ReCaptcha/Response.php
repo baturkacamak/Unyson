@@ -1,8 +1,10 @@
 <?php
+
 /**
  * This is a PHP library that handles calling reCAPTCHA.
  *
  * @copyright Copyright (c) 2015, Google Inc.
+ *
  * @link      http://www.google.com/recaptcha
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,20 +33,35 @@ class ReCaptchaResponse
 {
     /**
      * Succes or failure.
+     *
      * @var boolean
      */
     private $success = false;
 
     /**
      * Error code strings.
+     *
      * @var array
      */
-    private $errorCodes = array();
+    private $errorCodes = [];
+
+    /**
+     * Constructor.
+     *
+     * @param boolean $success
+     * @param array $errorCodes
+     */
+    public function __construct($success, array $errorCodes = [])
+    {
+        $this->success    = $success;
+        $this->errorCodes = $errorCodes;
+    }
 
     /**
      * Build the response from the expected JSON returned by the service.
      *
      * @param string $json
+     *
      * @return ReCaptchaResponse
      */
     public static function fromJson($json)
@@ -52,10 +69,10 @@ class ReCaptchaResponse
         $responseData = json_decode($json, true);
 
         if (!$responseData) {
-            return new ReCaptchaResponse(false, array('invalid-json'));
+            return new ReCaptchaResponse(false, ['invalid-json']);
         }
 
-        if (isset($responseData['success']) && $responseData['success'] == true) {
+        if (isset($responseData['success']) && true == $responseData['success'] && $responseData['score'] > 0.5) {
             return new ReCaptchaResponse(true);
         }
 
@@ -64,18 +81,6 @@ class ReCaptchaResponse
         }
 
         return new ReCaptchaResponse(false);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param boolean $success
-     * @param array $errorCodes
-     */
-    public function __construct($success, array $errorCodes = array())
-    {
-        $this->success = $success;
-        $this->errorCodes = $errorCodes;
     }
 
     /**
