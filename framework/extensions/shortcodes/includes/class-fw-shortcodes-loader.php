@@ -272,7 +272,7 @@ class _FW_Shortcodes_Loader
         ];
         $custom_class_found = false;
 
-        if (isset($data["rewrite_paths"][0])) {
+        if (isset($data["rewrite_paths"]) && isset($data["rewrite_paths"][0])) {
             $class_file = file_exists(
                 $data["rewrite_paths"][0] . "/class-fw-shortcode-{$dir_name}.php"
             ) ? $data["rewrite_paths"][0] . "/class-fw-shortcode-{$dir_name}.php" : $class_file;
